@@ -1,9 +1,8 @@
 import 'package:assignment_tenn/model/NameIcon.dart';
 import 'package:flutter/material.dart';
-
-
 import '../dbhelper/database_helper.dart';
 import '../model/note_model.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -54,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 key: UniqueKey(),
                 onDismissed: (direction) {
                   var db = DataBaseHelper();
-                  db.deleteNote(contactList[index].id!);
+                  db.deleteContact(contactList[index].id!);
                 },
                 background: Container(
                   color: Colors.red,
@@ -127,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'Contact',
                       style: TextStyle(fontSize: 20),
                     ),
-                    TextFormField(validator:(value){
+                    TextFormField(initialValue:name,validator:(value){
                       if (value!.isEmpty){
                         return"please enter a name";
                       }
@@ -179,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<List<ContactModel>> getContactList() async {
     var db = DataBaseHelper();
-    await db.getAllNote().then((value) {
+    await db.getAllContact().then((value) {
       //getAll note returns future so u need .then to access its value and the list returned from getAllNote func is stored in value
       contactList = value;
     });
@@ -191,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
    if(_formKey.currentState!.validate()){
      _formKey.currentState!.save();
     var db = DataBaseHelper();
-    await db.insertNote(ContactModel(name:name, phone:phone,email: email)).then((value){
+    await db.insertContact(ContactModel(name:name, phone:phone,email: email)).then((value){
       print("/////////////");
       print(value);
       Navigator.of(context).pop();
@@ -206,7 +205,13 @@ class _HomeScreenState extends State<HomeScreen> {
     if(_formKey.currentState!.validate()){
       _formKey.currentState!.save();
     var db = DataBaseHelper();
-    await db.updateNote(ContactModel(name:name, phone:phone,email: email)).then((value){
+      ContactModel contactModel = ContactModel(
+        id: id,
+        name: name,
+        phone: phone,
+        email: email,
+      );
+    await db.updateContact(contactModel).then((value){
       Navigator.of(context).pop(context);
 
       setState(() {
